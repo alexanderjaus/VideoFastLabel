@@ -6,8 +6,8 @@ Quick start
 
 - Requirements: Python 3.8+ (no external dependencies)
 - Steps:
-  1) Put your 5-second clips into the `videos/` folder (supported: .mp4, .webm, .m4v, .mov). Subfolders are supported; files are discovered recursively.
-  2) Run the server: `python3 server.py`
+  1) Put your 5-second clips in a folder (supported: .mp4, .webm, .m4v, .mov). Subfolders are supported; files are discovered recursively.
+  2) Run the server, optionally pointing to your videos path on first run: `python3 server.py --videos /path/to/your/videos` (or set env `VIDEOS_PATH=/path/to/your/videos`). The chosen path is persisted in `data/videos_path.txt` and used on subsequent runs.
   3) Open: `http://localhost:8000/?user=alice` (use a unique `user` per annotator)
   4) Reviewer dashboard: `http://localhost:8000/review` (see login below)
 
@@ -33,7 +33,7 @@ Keyboard shortcuts
 Data output
 
 - Labels are appended to `data/labels.jsonl` with fields:
-  - `id`: path of the video relative to the `videos/` folder (supports nested folders, e.g. `class_a/clip01.mp4`)
+  - `id`: path of the video relative to the configured videos folder (supports nested folders, e.g. `class_a/clip01.mp4`)
   - `user`: annotator id (from URL or modal)
   - `label`: `ok` or `not_ok`
   - `time_ms`: current playback position when labeled
@@ -46,6 +46,10 @@ Config
 - Assignment TTL (seconds): `ASSIGNMENT_TTL=120 python3 server.py`
 - Single label per video (default on): `SINGLE_LABEL_PER_VIDEO=0 python3 server.py` to allow multiple labels per clip.
  - Reviewer password (default `review`): `REVIEWER_PASSWORD=yourpass python3 server.py`
+ - Videos location:
+   - CLI: `python3 server.py --videos /path/to/your/videos` (or `-v PATH`)
+   - Env: `VIDEOS_PATH=/path/to/your/videos python3 server.py`
+   - Persistence: the resolved path is saved to `data/videos_path.txt` and used across restarts. Passing `--videos` or `VIDEOS_PATH` again updates it.
 
 Notes
 
@@ -58,6 +62,14 @@ Reviewer dashboard
 - Lists labels in reverse chronological order and supports filtering by user and searching by video id.
 - Buttons: Refresh, Logout. Links open the original video in a new tab.
  
+Migration from flat filenames to nested paths
+
+- If your existing `data/labels.jsonl` contains plain filenames (e.g., `clip01.mp4`) and you move to nested folders where IDs should be relative paths (e.g., `setA/clip01.mp4`), use the migration tool to rewrite IDs:
+  - Dry run + write a migrated file: `python3 migrate_labels.py --videos /path/to/your/videos`
+    - Outputs `data/labels.jsonl.migrated.jsonl` and prints a summary. Ambiguous or missing filenames are left unchanged and reported.
+  - Apply in place (creates backup): `python3 migrate_labels.py --videos /path/to/your/videos --apply`
+    - Replaces `data/labels.jsonl` and writes a backup `data/labels.jsonl.bak`.
+
 Assignment logic details
 
 - The app balances remaining clips across currently active users (those who have requested `/api/next`).

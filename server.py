@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 import threading
 import time
 import hmac
@@ -11,7 +12,7 @@ from urllib.parse import urlparse, parse_qs, unquote, quote
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(ROOT, "static")
-VIDEOS_DIR = os.path.join(ROOT, "videos")
+VIDEOS_DIR = os.path.join(ROOT, "videos")  # resolved during run()
 DATA_DIR = os.path.join(ROOT, "data")
 
 # Config
@@ -20,14 +21,58 @@ ASSIGNMENT_TTL_SEC = int(os.environ.get("ASSIGNMENT_TTL", "180"))
 SINGLE_LABEL_PER_VIDEO = os.environ.get("SINGLE_LABEL_PER_VIDEO", "1") not in ("0", "false", "False")
 REVIEWER_PASSWORD = os.environ.get("REVIEWER_PASSWORD", "review")
 SECRET_PATH = os.path.join(DATA_DIR, "secret.txt")
+VIDEOS_PATH_FILE = os.path.join(DATA_DIR, "videos_path.txt")
 
 VIDEO_EXTS = {".mp4", ".webm", ".m4v", ".mov"}
 
 
 def ensure_dirs():
     os.makedirs(STATIC_DIR, exist_ok=True)
-    os.makedirs(VIDEOS_DIR, exist_ok=True)
     os.makedirs(DATA_DIR, exist_ok=True)
+
+
+def _read_persisted_videos_path():
+    try:
+        if os.path.exists(VIDEOS_PATH_FILE):
+            with open(VIDEOS_PATH_FILE, "r", encoding="utf-8") as f:
+                p = f.read().strip()
+                return p or None
+    except Exception:
+        return None
+    return None
+
+
+def _write_persisted_videos_path(path: str):
+    try:
+        os.makedirs(DATA_DIR, exist_ok=True)
+        with open(VIDEOS_PATH_FILE, "w", encoding="utf-8") as f:
+            f.write(path)
+    except Exception:
+        pass
+
+
+def resolve_videos_dir(argv):
+    # Precedence: CLI arg (--videos/-v) > env VIDEOS_PATH > persisted > default
+    cli_path = None
+    for i, a in enumerate(argv):
+        if a in ("--videos", "-v") and i + 1 < len(argv):
+            cli_path = argv[i + 1]
+            break
+        if a.startswith("--videos="):
+            cli_path = a.split("=", 1)[1]
+            break
+    env_path = os.environ.get("VIDEOS_PATH")
+    persisted = _read_persisted_videos_path()
+    chosen = cli_path or env_path or persisted or os.path.join(ROOT, "videos")
+    # Normalize
+    chosen = os.path.abspath(chosen)
+    # If CLI or env specified and differs from persisted, update persisted
+    if (cli_path or env_path) and chosen != persisted:
+        _write_persisted_videos_path(chosen)
+    # If nothing persisted yet, store default/first resolution
+    if not persisted:
+        _write_persisted_videos_path(chosen)
+    return chosen
 
 
 class State:
@@ -766,11 +811,21 @@ class Handler(BaseHTTPRequestHandler):
 def run():
     global STATE
     ensure_dirs()
+    # Resolve videos directory based on CLI/env/persisted config
+    global VIDEOS_DIR
+    VIDEOS_DIR = resolve_videos_dir(sys.argv[1:])
+    # Create the default local folder if that's the chosen location
+    try:
+        default_local = os.path.abspath(os.path.join(ROOT, "videos"))
+        if VIDEOS_DIR == default_local:
+            os.makedirs(VIDEOS_DIR, exist_ok=True)
+    except Exception:
+        pass
     STATE = State()
     addr = ("", PORT)
     httpd = ThreadingHTTPServer(addr, Handler)
     print(f"FastVideoLabel server running on http://localhost:{PORT}")
-    print(f"Place videos in: {VIDEOS_DIR}")
+    print(f"Loading videos from: {VIDEOS_DIR}")
     print(f"Open: http://localhost:{PORT}/?user=alice")
     try:
         httpd.serve_forever()
