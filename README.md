@@ -6,7 +6,7 @@ Quick start
 
 - Requirements: Python 3.8+ (no external dependencies)
 - Steps:
-  1) Put your 5-second clips into the `videos/` folder (supported: .mp4, .webm, .m4v, .mov)
+  1) Put your 5-second clips into the `videos/` folder (supported: .mp4, .webm, .m4v, .mov). Subfolders are supported; files are discovered recursively.
   2) Run the server: `python3 server.py`
   3) Open: `http://localhost:8000/?user=alice` (use a unique `user` per annotator)
   4) Reviewer dashboard: `http://localhost:8000/review` (see login below)
@@ -33,7 +33,7 @@ Keyboard shortcuts
 Data output
 
 - Labels are appended to `data/labels.jsonl` with fields:
-  - `id`: filename of the video
+  - `id`: path of the video relative to the `videos/` folder (supports nested folders, e.g. `class_a/clip01.mp4`)
   - `user`: annotator id (from URL or modal)
   - `label`: `ok` or `not_ok`
   - `time_ms`: current playback position when labeled

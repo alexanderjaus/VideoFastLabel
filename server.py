@@ -6,7 +6,7 @@ import hmac
 import hashlib
 from http import HTTPStatus
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
-from urllib.parse import urlparse, parse_qs, unquote
+from urllib.parse import urlparse, parse_qs, unquote, quote
 
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -49,10 +49,19 @@ class State:
         items = []
         if not os.path.isdir(VIDEOS_DIR):
             return []
-        for name in sorted(os.listdir(VIDEOS_DIR)):
-            p = os.path.join(VIDEOS_DIR, name)
-            if os.path.isfile(p) and os.path.splitext(name)[1].lower() in VIDEO_EXTS:
-                items.append(name)
+        # Walk subdirectories and collect files with supported extensions.
+        for root, _dirs, files in os.walk(VIDEOS_DIR):
+            for name in files:
+                ext = os.path.splitext(name)[1].lower()
+                if ext not in VIDEO_EXTS:
+                    continue
+                p = os.path.join(root, name)
+                # Store paths relative to VIDEOS_DIR using forward slashes for consistency.
+                rel = os.path.relpath(p, VIDEOS_DIR)
+                if os.sep != "/":
+                    rel = rel.replace(os.sep, "/")
+                items.append(rel)
+        items.sort()
         return items
 
     def _load_existing_labels(self):
@@ -438,6 +447,10 @@ def guess_mime(path):
 class Handler(BaseHTTPRequestHandler):
     server_version = "FastVideoLabel/0.1"
 
+    def _video_url(self, vid: str) -> str:
+        # Return URL-encoded path for client usage
+        return "/videos/" + quote(vid)
+
     def _send_json(self, obj, status=200):
         data = json.dumps(obj).encode("utf-8")
         self.send_response(status)
@@ -478,7 +491,7 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send_json({"done": True})
             return self._send_json({
                 "id": vid,
-                "url": f"/videos/{vid}",
+                "url": self._video_url(vid),
             })
         if path == "/api/peek":
             qs = parse_qs(parsed.query)
@@ -486,7 +499,7 @@ class Handler(BaseHTTPRequestHandler):
             vid = STATE.peek_next_for_user(user) if user else STATE.peek_next()
             if not vid:
                 return self._send_json({"done": True})
-            return self._send_json({"id": vid, "url": f"/videos/{vid}"})
+            return self._send_json({"id": vid, "url": self._video_url(vid)})
         if path == "/api/user_labels":
             qs = parse_qs(parsed.query)
             user = (qs.get("user") or [None])[0]
