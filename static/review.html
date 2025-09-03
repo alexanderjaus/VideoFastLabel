@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Review Dashboard</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">Review Dashboard</div>
+      <div class="spacer"></div>
+      <nav class="info">
+        <a href="/" style="color: inherit;">Annotate</a>
+        <button id="logoutBtn" style="margin-left: 12px;">Logout</button>
+      </nav>
+    </header>
+
+    <main>
+      <section id="loginPanel" class="panel">
+        <h2>Reviewer Login</h2>
+        <div class="row">
+          <input id="password" type="password" placeholder="Password" />
+          <button id="loginBtn">Login</button>
+        </div>
+        <div id="loginError" class="error" style="display:none"></div>
+      </section>
+
+      <section id="reviewPanel" class="panel" style="display:none">
+        <div class="row" style="align-items:center; gap:12px;">
+          <div id="summary" class="muted"></div>
+          <div class="spacer"></div>
+          <label>User</label>
+          <select id="userFilter"></select>
+          <label>Search ID</label>
+          <input id="searchId" type="text" placeholder="clip substring" />
+          <button id="refreshBtn">Refresh</button>
+        </div>
+        <div class="table-wrap">
+          <table class="table" id="labelsTable">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>User</th>
+                <th>Video</th>
+                <th>Label</th>
+                <th>Pos</th>
+                <th>Duration</th>
+                <th>Preview</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script src="/static/review.js"></script>
+  </body>
+  </html>
+

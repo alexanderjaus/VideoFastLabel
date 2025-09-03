@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.venv/
+venv/
+env/
+
+# macOS
+.DS_Store
+
+# Logs
+server.log
+
+# Local app data (do not push)
+data/labels.jsonl
+data/secret.txt
+c.txt
+cookie.txt
+
+# Videos (keep placeholder only)
+videos/*
+!videos/.gitkeep
+
+# Node/tooling (none currently, just in case)
+node_modules/
+dist/
+build/

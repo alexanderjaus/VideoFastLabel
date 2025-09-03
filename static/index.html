@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fast Video Labeling</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <div class="brand">Fast Video Label</div>
+        <div class="spacer"></div>
+        <div class="info">
+          <span id="userDisplay"></span>
+          <span id="progress"></span>
+          <a id="myLabelsLink" class="link-btn" href="#">My Labels</a>
+        </div>
+      </header>
+
+      <main>
+        <div class="video-wrap">
+          <video id="video" preload="auto" playsinline muted autoplay loop></video>
+          <video id="preloadVideo" preload="auto" style="display:none"></video>
+        </div>
+
+        <div class="controls">
+          <button id="btnOk" class="ok">OK (K)</button>
+          <button id="btnNotOk" class="not">Not OK (J)</button>
+          <button id="btnSkip" class="skip">Skip (S)</button>
+          <button id="btnReplay" class="replay">Replay (R)</button>
+          <button id="btnUndo" class="undo" title="Undo last label (press U)">Undo (U)</button>
+        </div>
+
+        <div class="speed-controls">
+          <span class="muted">Speed</span>
+          <button id="speedDown" class="speed">-</button>
+          <span id="speedDisplay" class="muted">1.0x</span>
+          <button id="speedUp" class="speed">+</button>
+        </div>
+
+        <div class="hints">
+          <span>Space: Play/Pause</span>
+          <span>←/→: -/ +0.5s</span>
+        </div>
+
+        <section class="panel" style="margin-top:16px;">
+          <h3 style="margin:0 0 8px 0;">Team Progress</h3>
+          <div id="teamSummary" class="muted" style="margin-bottom:8px;"></div>
+          <div id="perUserList" class="peruser-list"></div>
+        </section>
+      </main>
+    </div>
+
+    <div id="userModal" class="modal">
+      <div class="modal-inner">
+        <h2>Enter your name</h2>
+        <input id="userInput" type="text" placeholder="e.g. alice" />
+        <button id="userSave">Start</button>
+      </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+  </body>
+  </html>

@@ -1,0 +1,68 @@
+:root {
+  --bg: #0f1115;
+  --panel: #171a21;
+  --text: #e6eaf2;
+  --muted: #9aa4b2;
+  --ok: #20c997;
+  --not: #ff6b6b;
+  --skip: #ffd166;
+  --accent: #6ea8fe;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+
+.topbar { display: flex; align-items: center; gap: 16px; padding: 10px 16px; background: var(--panel); border-bottom: 1px solid #20232b; }
+.brand { font-weight: 700; letter-spacing: 0.3px; }
+.spacer { flex: 1; }
+.info { display: flex; gap: 12px; color: var(--muted); }
+.link-btn { padding: 6px 10px; border: 1px solid #343a46; border-radius: 6px; color: var(--text); text-decoration: none; background: #0f1218; }
+
+main { max-width: 960px; margin: 20px auto; padding: 0 16px; }
+.video-wrap { background: #000; border-radius: 8px; overflow: hidden; border: 1px solid #20232b; }
+video { width: 100%; height: auto; display: block; background: #000; }
+
+.controls { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin: 16px 0; }
+.controls button { padding: 12px 16px; font-size: 16px; border-radius: 8px; border: none; cursor: pointer; color: #0b0d12; font-weight: 600; }
+.controls .ok { background: var(--ok); }
+.controls .not { background: var(--not); }
+.controls .skip { background: var(--skip); }
+.controls .replay { background: var(--accent); }
+.controls .undo { background: #adb5bd; color: #0b0d12; }
+
+.speed-controls { display: inline-flex; align-items: center; gap: 8px; margin: 4px 0 16px; }
+.speed-controls button.speed { padding: 6px 10px; font-size: 14px; border-radius: 6px; border: 1px solid #343a46; background: #0f1218; color: var(--text); cursor: pointer; }
+
+.hints { color: var(--muted); display: flex; gap: 16px; font-size: 14px; }
+
+.modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; place-items: center; }
+.modal-inner { background: var(--panel); padding: 24px; border: 1px solid #20232b; border-radius: 10px; width: min(420px, 92vw); display: grid; gap: 12px; }
+.modal input { padding: 10px 12px; font-size: 16px; border-radius: 8px; border: 1px solid #343a46; background: #0f1218; color: var(--text); }
+.modal button { padding: 10px 14px; font-size: 16px; border-radius: 8px; border: none; background: var(--accent); color: #0b0d12; font-weight: 700; cursor: pointer; }
+
+/* Panels and tables for review dashboard */
+.panel { background: var(--panel); border: 1px solid #20232b; border-radius: 10px; padding: 16px; margin: 16px 0; }
+.row { display: flex; gap: 8px; }
+.muted { color: var(--muted); }
+.panel input, .panel select, .panel button { padding: 8px 10px; border-radius: 8px; border: 1px solid #343a46; background: #0f1218; color: var(--text); }
+.panel button { background: var(--accent); color: #0b0d12; border: none; }
+.error { color: #ff6b6b; }
+.table-wrap { overflow: auto; max-height: 70vh; border: 1px solid #20232b; border-radius: 8px; }
+.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table th, .table td { padding: 8px 10px; border-bottom: 1px solid #20232b; }
+.table thead th { position: sticky; top: 0; background: #12151b; }
+.pill { padding: 2px 8px; border-radius: 999px; font-weight: 700; color: #0b0d12; }
+.pill-ok { background: var(--ok); }
+.pill-not { background: var(--not); }
+
+/* Per-user scoreboard */
+.peruser-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
+.peruser-item { background: #0f1218; border: 1px solid #20232b; border-radius: 8px; padding: 10px; display: flex; justify-content: space-between; align-items: center; }
+.peruser-item.me { border-color: var(--accent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent), transparent 60%); }
+.peruser-name { color: var(--text); font-weight: 600; }
+.peruser-count { color: var(--muted); }
+
+/* Toasts */
+.toast-container { position: fixed; right: 16px; bottom: 16px; display: grid; gap: 8px; z-index: 1000; }
+.toast { background: #10131a; color: var(--text); border: 1px solid #20232b; border-radius: 8px; padding: 10px 12px; display: flex; align-items: center; gap: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+.toast button { padding: 6px 10px; font-size: 14px; border-radius: 6px; border: none; background: var(--accent); color: #0b0d12; cursor: pointer; }

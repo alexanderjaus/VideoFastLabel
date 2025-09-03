@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>My Labels</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">My Labels</div>
+      <div class="spacer"></div>
+      <nav class="info">
+        <a id="backLink" class="link-btn" href="/">Back to Annotate</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="panel">
+        <div class="row" style="align-items:center; gap:12px;">
+          <div id="who" class="muted"></div>
+          <div class="spacer"></div>
+          <label>Filter</label>
+          <select id="filter">
+            <option value="all">All</option>
+            <option value="ok">Accepted</option>
+            <option value="not_ok">Rejected</option>
+          </select>
+          <button id="refresh">Refresh</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="video-wrap">
+          <video id="vid" preload="auto" playsinline muted controls></video>
+        </div>
+        <div class="row" style="margin-top:10px; gap:8px;">
+          <button id="prevBtn">Prev (A)</button>
+          <button id="nextBtn">Next (D)</button>
+          <div class="spacer"></div>
+          <button id="removeBtn" class="undo">Remove Label (Del)</button>
+        </div>
+        <div class="muted" id="meta"></div>
+      </section>
+    </main>
+
+    <script src="/static/my.js"></script>
+  </body>
+  </html>
+
